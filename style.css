@@ -1,0 +1,22 @@
+/* style.css - Tùy chỉnh giao diện nhẹ, phần còn lại do Tailwind đảm nhiệm */
+html,body{height:100%}
+/* Small helper styles */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Card hover effect */
+.card-elevated{transition:transform .18s ease,box-shadow .18s ease}
+.card-elevated:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(15,23,42,0.08)}
+
+/* Smooth scroll for internal links */
+html{scroll-behavior:smooth}
+
+/* Modal scroll handling */
+#detailModal:not(.hidden){overflow:auto}
+
+/* Small responsive tweaks */
+@media (min-width: 768px){
+  #booksGrid .card-title{font-size:13px}
+}
+
+/* Make category buttons consistent */
+.cat-btn{transition:background-color .15s ease,color .15s ease}

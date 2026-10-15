@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THƯ VIỆN THÔNG MINH — Cấn Việt Tùng & Tạ Ngọc Diệp 11A1</title>
+  <meta name="description" content="Thư viện thông minh - demo web hiển thị sách, tìm kiếm, lọc và xem chi tiết. Dự án KHKT của Cấn Việt Tùng & Tạ Ngọc Diệp 11A1">
+  <!-- Tailwind CSS (CDN cho demo) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] text-gray-900 min-h-screen">
+  <!-- 1. Thanh điều hướng trên cùng -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-gray-200 px-4 py-3">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gray-950 text-white flex items-center justify-center font-bold text-lg">
+          📚
+        </div>
+        <div>
+          <h1 class="font-extrabold text-sm sm:text-base text-gray-950">THƯ VIỆN THÔNG MINH</h1>
+          <p class="text-[11px] text-gray-500">Dự án KHKT của Cấn Việt Tùng &amp; Tạ Ngọc Diệp 11A1</p>
+        </div>
+      </div>
+      <div id="statusIndicator" class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+        ● Trực tuyến
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. Khung nội dung chính -->
+  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+    <!-- Thanh tìm kiếm & nhập mã ISBN -->
+    <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col sm:flex-row gap-3 items-center">
+      <div class="relative flex-1 w-full">
+        <input 
+          id="searchInput" 
+          type="text" 
+          aria-label="Tìm sách"
+          placeholder="Nhập tên sách, tác giả hoặc mã ISBN..." 
+          class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+        />
+      </div>
+      <!-- Các nút lọc thể loại nhanh -->
+      <div id="categories" class="flex items-center gap-2 overflow-x-auto">
+        <button data-cat="all" class="cat-btn px-3 py-2 rounded-xl text-xs font-bold bg-gray-900 text-white shrink-0">Tất cả</button>
+        <button data-cat="Văn học" class="cat-btn px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0">Văn học</button>
+        <button data-cat="Khoa học" class="cat-btn px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0">Khoa học</button>
+        <button data-cat="Công nghệ" class="cat-btn px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0">Công nghệ</button>
+      </div>
+    </div>
+
+    <!-- Danh sách hiển thị các cuốn sách -->
+    <div class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-gray-900">Danh mục tác phẩm</h2>
+        <span id="bookCount" class="text-xs text-gray-500">Đang tải...</span>
+      </div>
+      <!-- Lưới thẻ sách (render tự động bằng JavaScript) -->
+      <div id="booksGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <!-- Modal chi tiết sách -->
+  <div id="detailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalSummary">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-gray-200">
+      <!-- Đầu modal & nút đóng -->
+      <div class="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+        <span id="modalCategory" class="text-xs font-bold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200"></span>
+        <button id="closeModalBtn" class="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 font-bold text-xs flex items-center justify-center" aria-label="Đóng">✕</button>
+      </div>
+
+      <!-- Nội dung chi tiết cuốn sách -->
+      <div class="p-5 overflow-y-auto space-y-4 text-xs text-gray-700">
+        <div class="flex flex-col sm:flex-row gap-4 items-start">
+          <img id="modalCover" class="w-32 aspect-[3/4] object-cover rounded-xl border shadow-sm mx-auto sm:mx-0 shrink-0" src="" alt="Bìa sách" loading="lazy" />
+          <div class="space-y-1.5 flex-1">
+            <h3 id="modalTitle" class="text-lg font-black text-gray-900"></h3>
+            <p id="modalAuthor" class="font-semibold text-gray-600"></p>
+            <p id="modalIsbn" class="font-mono text-gray-400 text-[11px]"></p>
+            <div class="p-3 bg-orange-50/80 rounded-xl border border-orange-100 mt-2">
+              <span class="font-bold text-orange-900 block mb-0.5">Thông điệp cốt lõi:</span>
+              <p id="modalMessage" class="italic text-gray-800"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-1.5 border-t pt-3">
+          <h4 class="font-bold text-gray-900 text-sm">Tóm tắt nội dung:</h4>
+          <p id="modalSummary" class="leading-relaxed text-gray-600"></p>
+        </div>
+
+        <div class="space-y-1.5 border-t pt-3">
+          <h4 class="font-bold text-gray-900 text-sm">Bài học đúc kết:</h4>
+          <div id="modalTakeaways" class="space-y-1 text-gray-700"></div>
+        </div>
+
+        <!-- Khung tra cứu hỏi đáp nội bộ (Hoàn toàn KHÔNG dùng AI) -->
+        <div class="space-y-2 border-t pt-3">
+          <h4 class="font-bold text-gray-900 text-sm">Hỏi đáp & Tra cứu về tác phẩm:</h4>
+          <div id="chatBox" class="p-3 bg-gray-50 rounded-xl border space-y-2 max-h-40 overflow-y-auto" aria-live="polite">
+            <div class="p-2 bg-white rounded-lg border text-gray-600">Nhập câu hỏi để tra cứu thông điệp, tác giả hoặc ý nghĩa cuốn sách này.</div>
+          </div>
+          <div class="flex gap-2">
+            <input id="questionInput" type="text" placeholder="Nhập câu hỏi (ví dụ: tác giả, bài học, ý nghĩa)..." 
+              class="flex-1 px-3 py-2 rounded-xl border text-xs focus:outline-none focus:ring-1 focus:ring-orange-500" />
+            <button id="askBtn" class="px-4 py-2 bg-gray-900 hover:bg-black text-white rounded-xl font-bold">Tra cứu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 1. Mảng dữ liệu sách thuần túy (Static Database)
+    const books = [
+      {
+        id: "1",
+        title: "TRUYỆN KIỀU",
+        author: "Nguyễn Du",
+        isbn: "STK-006073",
+        category: "Văn học",
+        coverImage: "https://cdn1.fahasa.com/media/catalog/product/b/_/b_a-1-truy_n-ki_u.jpg",
+        summary: "Truyện Kiều gồm 3.254 câu thơ lục bát, kể về cuộc đời 15 năm lưu lạc đầy chìm nổi của Thúy Kiều vì chữ hiếu mà hy sinh tình riêng.",
+        message: "Đề cao giá trị nhân phẩm, khát vọng tự do yêu đương và tư tưởng 'Chữ Tâm kia mới bằng ba chữ Tài'.",
+        takeaways: [
+          "Lòng hiếu thảo cao đẹp và sự hy sinh vì gia đình.",
+          "Nghệ thuật miêu tả tâm lý nhân vật và cảnh ngụ tình bậc thầy.",
+          "Chữ Tâm và lòng nhân ái là giá trị cốt lõi của con người."
+        ]
+      },
+      {
+        id: "2",
+        title: "DẾ MÈN PHIÊU LƯU KÝ",
+        author: "Tô Hoài",
+        isbn: "9786042183246",
+        category: "Văn học",
+        coverImage: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_21128.jpg",
+        summary: "Hành trình trưởng thành của Dế Mèn từ một chú dế kiêu căng, trải qua biến cố đã thức tỉnh và phiêu lưu bốn phương kết bạn cùng Dế Trũi.",
+        message: "Tình bạn chân thành, lòng dũng cảm, tinh thần chuộng hòa bình và sự khiêm tốn.",
+        takeaways: [
+          "Bài học đắt giá về thói kiêu căng ngạo mạn.",
+          "Tình anh em hoạn nạn có nhau giữa Dế Mèn và Dế Trũi.",
+          "Khát vọng muôn loài kết làm anh em hòa bình."
+        ]
+      },
+      {
+        id: "3",
+        title: "HOÀNG TỬ BÉ",
+        author: "Antoine de Saint-Exupéry",
+        isbn: "9786042171922",
+        category: "Văn học",
+        coverImage: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_43176.jpg",
+        summary: "Cuộc gặp gỡ kỳ diệu giữa viên phi công gặp nạn trên sa mạc Sahara và cậu bé đến từ tiểu tinh cầu B-612.",
+        message: "Những điều cốt lõi nhất thì vô hình trong mắt trần; người ta chỉ có thể nhìn thấy rõ ràng bằng trái tim.",
+        takeaways: [
+          "Người ta chỉ thấy rõ với trái tim, mắt thường không thấy được điều cốt lõi.",
+          "Bạn phải chịu trách nhiệm mãi mãi với những gì bạn đã thuần hóa.",
+          "Thời gian bạn dành cho bông hoa làm nàng trở nên quý giá."
+        ]
+      },
+      {
+        id: "4",
+        title: "COSMOS: VŨ TRỤ",
+        author: "Carl Sagan",
+        isbn: "9786047771233",
+        category: "Khoa học",
+        coverImage: "https://cdn0.fahasa.com/media/catalog/product/8/9/8935235227361.jpg",
+        summary: "Khám phá 15 tỷ năm lịch sử tiến hóa của vũ trụ và hành trình tìm tòi khoa học của loài người.",
+        message: "Trái Đất là ngôi nhà chung mong manh giữa vũ trụ bao la; chúng ta có trách nhiệm trân trọng và bảo vệ nó.",
+        takeaways: [
+          "Chúng ta đều là tro bụi của các vì sao kết tinh thành.",
+          "Tư duy hoài nghi khoa học đi cùng lòng bao dung.",
+          "Trách nhiệm bảo vệ hành tinh xanh của nhân loại."
+        ]
+      }
+    ];
+
+    let currentCategory = 'all';
+    let currentBook = null;
+
+    // Utility: safe image fallback
+    function setImageWithFallback(img, url) {
+      img.src = url;
+      img.onerror = () => { img.src = 'https://via.placeholder.com/240x320?text=No+Image'; };
+    }
+
+    // 2. Hiển thị danh sách thẻ sách lên màn hình (safely)
+    function renderBooks() {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      const filtered = books.filter(b => {
+        const matchCat = currentCategory === 'all' || b.category === currentCategory;
+        const matchQuery = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.isbn.toLowerCase().includes(q);
+        return matchCat && matchQuery;
+      });
+
+      document.getElementById('bookCount').textContent = `Hiển thị ${filtered.length} cuốn sách`;
+      const grid = document.getElementById('booksGrid');
+      grid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'col-span-full p-6 bg-white rounded-2xl border border-gray-200 text-center text-gray-500';
+        empty.textContent = 'Không tìm thấy sách phù hợp.';
+        grid.appendChild(empty);
+        return;
+      }
+
+      filtered.forEach(b => {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-3 rounded-2xl border border-gray-200 hover:shadow-md cursor-pointer transition-all flex flex-col';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.addEventListener('click', () => openBook(b.id));
+        card.addEventListener('keydown', (e) => { if (e.key === 'Enter') openBook(b.id); });
+
+        const img = document.createElement('img');
+        img.className = 'w-full aspect-[3/4] object-cover rounded-xl mb-2';
+        img.alt = b.title + ' - bìa sách';
+        img.loading = 'lazy';
+        setImageWithFallback(img, b.coverImage);
+
+        const span = document.createElement('span');
+        span.className = 'text-[10px] font-bold text-orange-600';
+        span.textContent = b.category;
+
+        const h4 = document.createElement('h4');
+        h4.className = 'font-bold text-xs text-gray-900 truncate';
+        h4.textContent = b.title;
+
+        const p = document.createElement('p');
+        p.className = 'text-[11px] text-gray-500 truncate';
+        p.textContent = b.author;
+
+        const foot = document.createElement('div');
+        foot.className = 'mt-auto pt-2 border-t text-[11px] font-semibold text-orange-500 text-right';
+        foot.textContent = 'Xem chi tiết →';
+
+        card.appendChild(img);
+        card.appendChild(span);
+        card.appendChild(h4);
+        card.appendChild(p);
+        card.appendChild(foot);
+
+        grid.appendChild(card);
+      });
+    }
+
+    // 3. Hàm lọc theo thể loại
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.classList.remove('bg-gray-100','text-gray-700');
+          btn.classList.add('bg-gray-900','text-white');
+        } else {
+          btn.classList.remove('bg-gray-900','text-white');
+          btn.classList.add('bg-gray-100','text-gray-700');
+        }
+      });
+      renderBooks();
+    }
+
+    // 5. Mở xem chi tiết tác phẩm
+    function openBook(id) {
+      currentBook = books.find(b => b.id === id);
+      if (!currentBook) return;
+
+      const modal = document.getElementById('detailModal');
+      document.getElementById('modalCategory').textContent = currentBook.category;
+      document.getElementById('modalTitle').textContent = currentBook.title;
+      document.getElementById('modalAuthor').textContent = `Tác giả: ${currentBook.author}`;
+      document.getElementById('modalIsbn').textContent = `Mã ISBN: ${currentBook.isbn}`;
+      setImageWithFallback(document.getElementById('modalCover'), currentBook.coverImage);
+      document.getElementById('modalMessage').textContent = currentBook.message;
+      document.getElementById('modalSummary').textContent = currentBook.summary;
+
+      const takeaways = document.getElementById('modalTakeaways');
+      takeaways.innerHTML = '';
+      currentBook.takeaways.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'flex items-start gap-1.5';
+        const dot = document.createElement('span');
+        dot.className = 'text-orange-500 font-bold';
+        dot.textContent = '•';
+        const txt = document.createElement('span');
+        txt.textContent = t;
+        row.appendChild(dot);
+        row.appendChild(txt);
+        takeaways.appendChild(row);
+      });
+
+      // Đặt lại khung hỏi đáp
+      const chat = document.getElementById('chatBox');
+      chat.innerHTML = '';
+      const info = document.createElement('div');
+      info.className = 'p-2 bg-white rounded-lg border text-gray-700';
+      info.innerHTML = `Đã mở thông tin tác phẩm <strong>"${escapeHtml(currentBook.title)}"</strong>. Bạn có thể hỏi về tác giả, bài học hoặc nội dung sách.`;
+      chat.appendChild(info);
+
+      modal.classList.remove('hidden');
+      // focus management
+      document.getElementById('questionInput').focus();
+    }
+
+    // Escape HTML for small innerHTML usage
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"]+/g, function(s){
+        return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[s];
+      });
+    }
+
+    // 6. Đóng modal
+    function closeModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+      // restore focus to search
+      document.getElementById('searchInput').focus();
+      currentBook = null;
+    }
+
+    // 7. Hỏi đáp nội bộ theo từ khóa (KHÔNG DÙNG AI, trả lời trực tiếp từ dữ liệu sách)
+    function answerQuestion() {
+      const input = document.getElementById('questionInput');
+      const qRaw = input.value.trim();
+      const q = qRaw.toLowerCase();
+      if (!q || !currentBook) return;
+
+      const chat = document.getElementById('chatBox');
+      // user bubble (safe)
+      const userBubble = document.createElement('div');
+      userBubble.className = 'p-2 bg-orange-500 text-white rounded-lg text-right max-w-[80%] ml-auto font-medium';
+      userBubble.textContent = qRaw;
+      chat.appendChild(userBubble);
+
+      input.value = '';
+
+      let reply = '';
+      if (q.includes('tác giả') || q.includes('ai viết') || q.includes('tác phẩm của')) {
+        reply = `Tác phẩm ${currentBook.title} được sáng tác bởi tác giả ${currentBook.author}.`;
+      } else if (q.includes('bài học') || q.includes('đúc kết') || q.includes('ý nghĩa')) {
+        reply = `Các bài học quan trọng của sách:\n` + currentBook.takeaways.map(t => `• ${t}`).join('\n');
+      } else if (q.includes('thông điệp')) {
+        reply = `Thông điệp của cuốn sách là: "${currentBook.message}"`;
+      } else {
+        reply = `Về cuốn sách "${currentBook.title}": ${currentBook.summary}`;
+      }
+
+      const replyNode = document.createElement('div');
+      replyNode.className = 'p-2 bg-white rounded-lg border text-gray-800 whitespace-pre-line';
+      replyNode.textContent = reply;
+      chat.appendChild(replyNode);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Handle keyboard (Escape closes modal)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !document.getElementById('detailModal').classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+
+    // small initialization after DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      // replace inline handlers: categories
+      document.getElementById('categories').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-cat]');
+        if (!btn) return;
+        filterCategory(btn.dataset.cat);
+      });
+
+      document.getElementById('searchInput').addEventListener('input', () => renderBooks());
+
+      document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+      document.getElementById('askBtn').addEventListener('click', answerQuestion);
+      document.getElementById('questionInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') answerQuestion(); });
+
+      // init category style
+      filterCategory('all');
+      renderBooks();
+    });
+  </script>
+</body>
+</html>

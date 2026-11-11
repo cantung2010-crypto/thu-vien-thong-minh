@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THƯ VIỆN THÔNG MINH — Khám phá Sách Thông minh</title>
+  
+  <!-- Bước 1: Nạp Tailwind CSS & Phông chữ tiếng Việt chuẩn -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Nạp thư viện biểu tượng Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Nạp thư viện quét mã vạch camera quang học -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body { font-family: 'Plus Jakarta Sans', 'Be Vietnam Pro', system-ui, sans-serif; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-white text-gray-900 min-h-screen flex flex-col antialiased selection:bg-orange-100 selection:text-orange-900">
+
+  <!-- ======================================================== -->
+  <!-- BƯỚC 3: THANH ĐIỀU HƯỚNG TRÊN CÙNG (NAVBAR GIỐNG 100%) -->
+  <!-- ======================================================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between gap-2">
+      <!-- Thương hiệu Thư viện Thông minh -->
+      <div class="flex items-center gap-2 sm:gap-2.5 min-w-0 shrink">
+        <div class="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center text-white shadow-xs shrink-0">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+        </div>
+        <div class="min-w-0">
+          <span class="font-bold text-xs sm:text-base text-gray-950 tracking-tight block truncate">
+            THƯ VIỆN THÔNG MINH
+          </span>
+        </div>
+      </div>
+
+      <!-- Các nút thao tác góc phải -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <!-- Nút Gợi ý (Không cần AI ngoài, dùng bộ lọc tâm trạng nội bộ) -->
+        <button
+          type="button"
+          onclick="openPersonalityModal()"
+          class="px-2 sm:px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-gradient-to-r from-orange-50 to-purple-50 text-gray-800 border border-orange-200/60 hover:border-orange-300 active:scale-95 transition-all shadow-2xs cursor-pointer"
+          title="Gợi ý theo sở thích & tính cách cá nhân"
+        >
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#FF7A00]"></i>
+          <span class="hidden xs:inline sm:inline">Gợi ý tác phẩm</span>
+        </button>
+
+        <!-- Nút Quét mã Camera với đèn nháy Ping -->
+        <button
+          type="button"
+          onclick="openScannerModal()"
+          class="group relative px-2.5 sm:px-3.5 py-1.5 bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 hover:from-orange-500 hover:to-amber-500 active:scale-95 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-orange-600/20 hover:shadow-orange-600/35 shrink-0 cursor-pointer border border-orange-400/40"
+          title="Quét mã vạch ISBN sách"
+        >
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-200 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+          </span>
+          <i data-lucide="camera" class="w-3.5 h-3.5 text-white transition-transform group-hover:scale-110"></i>
+          <span class="font-extrabold tracking-tight">Quét mã</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- BƯỚC 4: KHUNG TÌM KIẾM, SẮP XẾP & BỘ LỌC THỂ LOẠI       -->
+  <!-- ======================================================== -->
+  <main class="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 space-y-6 pb-28 md:pb-12 flex-1 w-full">
+    
+    <!-- Hàng tìm kiếm & sắp xếp -->
+    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+      <!-- Ô nhập tìm kiếm -->
+      <div class="relative flex-1">
+        <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-3.5 sm:top-3"></i>
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Tìm kiếm theo tên sách, tác giả, thể loại, mã ISBN..."
+          oninput="handleSearchChange()"
+          class="w-full pl-9 pr-8 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-200 rounded-xl sm:rounded-lg bg-white focus:outline-none focus:border-gray-900 transition-colors shadow-2xs"
+        />
+        <button
+          id="clearSearchBtn"
+          type="button"
+          onclick="clearSearch()"
+          class="hidden absolute right-3 top-3.5 sm:top-3 text-gray-400 hover:text-gray-700 cursor-pointer"
+        >
+          <i data-lucide="x" class="w-4 h-4 sm:w-3.5 sm:h-3.5"></i>
+        </button>
+      </div>
+
+      <!-- Hộp chọn sắp xếp -->
+      <div class="flex items-center gap-2 shrink-0 justify-between sm:justify-start">
+        <span class="text-xs text-gray-500 font-medium">Sắp xếp:</span>
+        <div class="flex items-center gap-1 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs bg-white shadow-2xs">
+          <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 text-gray-400"></i>
+          <select
+            id="sortSelect"
+            onchange="handleSortChange()"
+            class="bg-transparent font-medium focus:outline-none cursor-pointer text-xs"
+          >
+            <option value="popular">Phổ biến nhất</option>
+            <option value="newest">Mới nhất</option>
+            <option value="title">Tên sách (A-Z)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thanh thẻ thể loại (Category Pills) -->
+    <div id="categoryPills" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+      <!-- Render bằng JavaScript -->
+    </div>
+
+    <!-- Thông báo kết quả tìm kiếm nếu có -->
+    <div id="searchNotice" class="hidden flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
+      <span id="searchNoticeText"></span>
+      <button onclick="clearSearch()" class="text-gray-700 underline font-medium cursor-pointer">
+        Xóa tìm kiếm
+      </button>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- BƯỚC 5: LƯỚI THẺ SÁCH (BOOK CARD GRID GIỐNG 100%)       -->
+    <!-- ======================================================== -->
+    <div id="booksGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+      <!-- Render bằng JavaScript -->
+    </div>
+
+    <!-- Trạng thái trống khi không tìm thấy sách -->
+    <div id="emptyState" class="hidden text-center py-16 border border-dashed border-gray-200 rounded-xl space-y-2">
+      <i data-lucide="book-open" class="w-8 h-8 text-gray-300 mx-auto"></i>
+      <p class="text-sm font-semibold text-gray-700">Không tìm thấy sách phù hợp</p>
+      <p class="text-xs text-gray-500">Hãy thử từ khóa khác hoặc bấm Tất cả thể loại.</p>
+      <button
+        onclick="resetAllFilters()"
+        class="mt-2 px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-medium cursor-pointer"
+      >
+        Xem tất cả sách
+      </button>
+    </div>
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- BƯỚC 6: CHÂN TRANG (FOOTER) & THANH MOBILE BOTTOM BAR    -->
+  <!-- ======================================================== -->
+  <footer class="border-t border-gray-200 py-6 px-4 text-center text-xs text-gray-500 mb-20 md:mb-0 flex flex-col items-center justify-center gap-2">
+    <p class="font-medium tracking-wide">
+      DỰ ÁN KHOA HỌC KĨ THUẬT CỦA CẤN VIỆT TÙNG VÀ TẠ NGỌC DIỆP 11A1
+    </p>
+    <div class="inline-flex items-center gap-1.5 text-[11px] text-gray-400 py-1 px-2.5">
+      <i data-lucide="lock" class="w-3 h-3 text-gray-400"></i>
+      <span>Hệ thống Thư viện Trường học Thông minh</span>
+    </div>
+  </footer>
+
+  <!-- Thanh điều hướng cố định phía dưới màn hình điện thoại -->
+  <div class="block md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 px-6 pt-1.5 pb-3 shadow-lg">
+    <div class="max-w-sm mx-auto flex items-center justify-around text-center">
+      <button
+        type="button"
+        onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+        class="flex flex-col items-center justify-center py-1 text-gray-900 active:scale-95 transition-transform flex-1"
+      >
+        <i data-lucide="book-open" class="w-5 h-5 mb-0.5 text-gray-900"></i>
+        <span class="text-[10px] font-semibold">Kệ sách</span>
+      </button>
+
+      <!-- Nút quét mã tròn nổi ở giữa -->
+      <div class="flex justify-center -mt-6 px-2">
+        <button
+          type="button"
+          onclick="openScannerModal()"
+          class="w-13 h-13 rounded-full bg-gray-950 text-white shadow-xl flex items-center justify-center active:scale-90 transition-transform cursor-pointer ring-4 ring-white"
+          title="Quét mã ISBN"
+        >
+          <i data-lucide="camera" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <button
+        type="button"
+        onclick="openPersonalityModal()"
+        class="flex flex-col items-center justify-center py-1 text-gray-600 hover:text-gray-950 active:scale-95 transition-transform flex-1 cursor-pointer"
+      >
+        <i data-lucide="sparkles" class="w-5 h-5 mb-0.5 text-[#FF7A00]"></i>
+        <span class="text-[10px] font-medium">Gợi ý</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- BƯỚC 7: CỬA SỔ XEM CHI TIẾT SÁCH (MODAL 5 TAB CHUYÊN SÂU) -->
+  <!-- ======================================================== -->
+  <div id="detailsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-5xl w-full h-[92vh] flex flex-col shadow-2xl border border-gray-200 overflow-hidden">
+      
+      <!-- Đầu Modal -->
+      <div class="px-4 py-3 sm:px-6 sm:py-3.5 border-b border-gray-200 flex items-center justify-between gap-3 shrink-0 bg-white">
+        <div class="flex items-center gap-2 min-w-0">
+          <span id="modalCategoryBadge" class="text-xs font-semibold px-2 py-0.5 rounded bg-gray-100 text-gray-700 shrink-0"></span>
+          <h2 id="modalBookTitle" class="font-bold text-sm sm:text-base text-gray-950 truncate"></h2>
+        </div>
+        <button
+          type="button"
+          onclick="closeDetailsModal()"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer shrink-0"
+        >
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Thân Modal chia 2 cột -->
+      <div class="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-12 overflow-hidden divide-y md:divide-y-0 md:divide-x divide-gray-200">
+        
+        <!-- CỘT TRÁI: 5 TAB NỘI DUNG (Tổng quan, Cốt truyện, Tác giả, Nhân vật, Thông điệp) -->
+        <div class="md:col-span-7 flex flex-col h-full overflow-hidden bg-gray-50/50">
+          <!-- Thanh Tab chuyển đổi -->
+          <div class="flex items-center gap-1 px-3 pt-2.5 border-b border-gray-200 bg-white overflow-x-auto no-scrollbar shrink-0">
+            <button onclick="switchTab('overview')" id="tabBtn-overview" class="tab-btn pb-2.5 px-2.5 text-xs font-bold border-b-2 border-gray-900 text-gray-900 whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+              <span>Tổng quan</span>
+            </button>
+            <button onclick="switchTab('plot')" id="tabBtn-plot" class="tab-btn pb-2.5 px-2.5 text-xs font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-900 whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="git-commit" class="w-3.5 h-3.5 text-indigo-600"></i>
+              <span>Cốt truyện</span>
+            </button>
+            <button onclick="switchTab('author')" id="tabBtn-author" class="tab-btn pb-2.5 px-2.5 text-xs font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-900 whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span>Tác giả</span>
+            </button>
+            <button onclick="switchTab('characters')" id="tabBtn-characters" class="tab-btn pb-2.5 px-2.5 text-xs font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-900 whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-sky-600"></i>
+              <span>Nhân vật</span>
+            </button>
+            <button onclick="switchTab('message')" id="tabBtn-message" class="tab-btn pb-2.5 px-2.5 text-xs font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-900 whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="quote" class="w-3.5 h-3.5 text-amber-600"></i>
+              <span>Thông điệp</span>
+            </button>
+          </div>
+
+          <!-- Khu vực hiển thị nội dung từng Tab cuộn dọc -->
+          <div id="tabContentContainer" class="p-4 sm:p-5 space-y-4 overflow-y-auto flex-1 text-xs text-gray-800">
+            <!-- Nội dung sẽ được cập nhật tự động khi chuyển Tab -->
+          </div>
+        </div>
+
+        <!-- CỘT PHẢI: KHUNG TRA CỨU & HỎI ĐÁP VỀ SÁCH (CHẠY NỘI BỘ, 0% AI NGOÀI) -->
+        <div class="md:col-span-5 flex flex-col bg-white h-full overflow-hidden">
+          <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
+            <div class="flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+              <span class="text-xs font-bold text-gray-900">Tra cứu & Trò chuyện về tác phẩm</span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
+              Dữ liệu Thư viện
+            </span>
+          </div>
+
+          <!-- Lịch sử tin nhắn trao đổi -->
+          <div id="chatMessagesBox" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs bg-gray-50/40">
+            <!-- Tin nhắn mẫu -->
+          </div>
+
+          <!-- Các câu hỏi gợi ý nhanh -->
+          <div class="px-3 py-2 border-t border-gray-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-white shrink-0">
+            <span class="text-[10px] font-bold text-amber-900 shrink-0">Gợi ý:</span>
+            <button onclick="askPreset('Thông điệp cốt lõi của tác phẩm này là gì?')" class="px-2.5 py-1 rounded-md text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-200 whitespace-nowrap">
+              Thông điệp sách
+            </button>
+            <button onclick="askPreset('Những bài học đúc kết quan trọng nhất?')" class="px-2.5 py-1 rounded-md text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-200 whitespace-nowrap">
+              Bài học đúc kết
+            </button>
+            <button onclick="askPreset('Giới thiệu chi tiết về tác giả của cuốn sách?')" class="px-2.5 py-1 rounded-md text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-200 whitespace-nowrap">
+              Tác giả cuốn sách
+            </button>
+          </div>
+
+          <!-- Hộp gõ câu hỏi tra cứu -->
+          <form onsubmit="handleSendChat(event)" class="p-2.5 border-t border-gray-200 flex items-center gap-2 bg-white shrink-0">
+            <input
+              id="chatInput"
+              type="text"
+              placeholder="Hỏi về tác giả, bài học, nhân vật..."
+              class="flex-1 px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:border-gray-900 transition-colors"
+            />
+            <button
+              type="submit"
+              class="px-3.5 py-2 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-black transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+            >
+              <span>Gửi</span>
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- BƯỚC 8: CỬA SỔ QUÉT MÃ VẠCH (BARCODE SCANNER)            -->
+  <!-- ======================================================== -->
+  <div id="scannerModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-200 text-center">
+      <div class="flex items-center justify-between">
+        <div class="text-left">
+          <h3 class="text-base font-bold text-gray-900">Quét mã vạch ISBN</h3>
+          <p class="text-[11px] text-gray-500">Đưa camera về phía mã vạch sau bìa sách</p>
+        </div>
+        <button onclick="closeScannerModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-700 font-bold">✕</button>
+      </div>
+
+      <!-- Khung Camera quét mã vạch quang học -->
+      <div id="barcodeReaderBox" class="w-full aspect-[4/3] bg-gray-950 rounded-2xl overflow-hidden relative border border-gray-200 flex items-center justify-center text-white text-xs">
+        <span class="text-gray-400">Đang bật Camera quét mã...</span>
+      </div>
+
+      <!-- Hoặc nhập mã thủ công -->
+      <div class="space-y-2 pt-1 text-left">
+        <p class="text-[11px] text-gray-400 font-medium">Hoặc nhập mã ISBN thủ công:</p>
+        <div class="flex gap-2">
+          <input
+            id="manualIsbnInput"
+            type="text"
+            placeholder="Ví dụ: STK-006073 hoặc 9786042171922"
+            class="flex-1 px-3 py-2 rounded-xl border text-xs font-mono focus:outline-none focus:ring-1 focus:ring-orange-500"
+          />
+          <button onclick="submitManualIsbn()" class="px-4 py-2 rounded-xl bg-gray-950 text-white text-xs font-bold hover:bg-gray-800">
+            Tìm sách
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- BƯỚC 8b: CỬA SỔ GỢI Ý TÁC PHẨM THEO TÂM TRẠNG SỞ THÍCH -->
+  <!-- ======================================================== -->
+  <div id="personalityModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">✨</span>
+          <div>
+            <h3 class="text-sm font-black text-gray-900">GỢI Ý TÁC PHẨM PHÙ HỢP</h3>
+            <p class="text-[11px] text-gray-500">Khám phá sách phù hợp với tâm trạng của bạn</p>
+          </div>
+        </div>
+        <button onclick="closePersonalityModal()" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-700 font-bold text-xs">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs text-left">
+        <label class="font-bold text-gray-700 block">Hôm nay bạn muốn đọc gì?</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="pickMood('kham-pha')" class="p-3 rounded-xl border hover:border-orange-500 hover:bg-orange-50 text-left transition-all">
+            🚀 Muốn phiêu lưu, khám phá
+          </button>
+          <button onclick="pickMood('suy-ngam')" class="p-3 rounded-xl border hover:border-orange-500 hover:bg-orange-50 text-left transition-all">
+            ☕ Muốn lắng đọng, chiêm nghiệm
+          </button>
+          <button onclick="pickMood('khoa-hoc')" class="p-3 rounded-xl border hover:border-orange-500 hover:bg-orange-50 text-left transition-all">
+            🔬 Muốn tìm hiểu khoa học
+          </button>
+          <button onclick="pickMood('truyen-cam-hung')" class="p-3 rounded-xl border hover:border-orange-500 hover:bg-orange-50 text-left transition-all">
+            🌟 Cần nạp năng lượng tích cực
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- BƯỚC 9: TOÀN BỘ LOGIC JAVASCRIPT ĐIỀU KHIỂN TRANG WEB    -->
+  <!-- ======================================================== -->
+  <script>
+    // 1. CƠ SỞ DỮ LIỆU SÁCH CHUẨN ĐẦY ĐỦ CỦA DỰ ÁN
+    const booksData = [
+      {
+        id: "book-kieu",
+        title: "TRUYỆN KIỀU",
+        author: "Nguyễn Du",
+        isbn: "STK-006073",
+        category: "Văn học",
+        publisher: "NXB Văn Học",
+        year: 2024,
+        pageCount: 186,
+        shelfLocation: "Kệ A1 - Tủ Văn học Cổ điển",
+        views: 342,
+        coverImage: "https://cdn1.fahasa.com/media/catalog/product/b/_/b_a-1-truy_n-ki_u.jpg",
+        description: "Kiệt tác bất hủ của đại thi hào Nguyễn Du gồm 3.254 câu thơ lục bát, phản ánh sâu sắc số phận người phụ nữ tài hoa bạc mệnh và khát vọng nhân văn.",
+        summary: "Truyện Kiều kể về cuộc đời 15 năm lưu lạc đầy đau khổ của Thúy Kiều - người con gái tài sắc vẹn toàn vì cứu cha mà phải bán mình chuộc tội, trải qua muôn vàn gian truân trước khi đoàn tụ gia đình.",
+        message: "Đề cao giá trị nhân phẩm, quyền tự do yêu đương, lòng hiếu thảo và tư tưởng 'Chữ Tâm kia mới bằng ba chữ Tài' làm gốc rễ cuộc đời.",
+        keyTakeaways: [
+          "Khát vọng tự do yêu đương và tự quyết định hạnh phúc qua mối tình Kim - Kiều.",
+          "Chữ Hiếu cao đẹp khi Kiều chấp nhận hy sinh duyên riêng vì gia đình.",
+          "Nghệ thuật miêu tả tâm lý và ngôn ngữ thơ lục bát trác tuyệt của Nguyễn Du.",
+          "Lấy chữ Tâm và lòng nhân ái làm nền tảng định hướng giá trị làm người."
+        ],
+        plot: [
+          { event: "Du xuân Thanh minh", desc: "Thúy Kiều gặp gỡ Kim Trọng và hai bên thề nguyền gắn bó son sắt." },
+          { event: "Gia biến tai ương", desc: "Gia đình gặp nạn, Kiều bán mình chuộc cha và trao lại mối duyên cho em gái Thúy Vân." },
+          { event: "Mười lăm năm lưu lạc", desc: "Rơi vào tay Mã Giám Sinh, Tú Bà, Sở Khanh, Thúc Sinh, Hoạn Thư..." },
+          { event: "Gặp gỡ Từ Hải", desc: "Từ Hải giúp Kiều báo ân báo oán, lấy lại công lý danh dự." },
+          { event: "Đoàn tụ", desc: "Trở về hội ngộ cùng gia đình và Kim Trọng sau muôn trùng bão táp." }
+        ],
+        authorBio: "Đại thi hào dân tộc, Danh nhân văn hóa thế giới (1765 - 1820), quê tại Tiên Điền, Nghi Xuân, Hà Tĩnh. Bậc thầy của thể thơ lục bát tiếng Việt.",
+        characters: [
+          { name: "Thúy Kiều", role: "Nhân vật chính", trait: "Tài sắc vẹn toàn, hiếu nghĩa, giàu đức hy sinh" },
+          { name: "Kim Trọng", role: "Người tình tri kỷ", trait: "Hào hoa phong nhã, thủy chung son sắt" },
+          { name: "Thúy Vân", role: "Em gái Kiều", trait: "Đoan trang, phúc hậu, thay chị trọn nghĩa" },
+          { name: "Từ Hải", role: "Anh hùng trượng nghĩa", trait: "Đầu đội trời chân đạp đất, trọng nghĩa khinh tài" }
+        ]
+      },
+      {
+        id: "book-de-men",
+        title: "DẾ MÈN PHIÊU LƯU KÝ",
+        author: "Tô Hoài",
+        isbn: "9786042183246",
+        category: "Văn học",
+        publisher: "NXB Kim Đồng",
+        year: 2023,
+        pageCount: 195,
+        shelfLocation: "Kệ B2 - Văn học Thiếu nhi",
+        views: 428,
+        coverImage: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_21128.jpg",
+        description: "Tác phẩm văn học thiếu nhi kinh điển của Tô Hoài kể về bài học trưởng thành và lý tưởng hòa bình của chú Dế Mèn.",
+        summary: "Từ một chàng dế kiêu căng gây ra cái chết của Dế Choắt, Dế Mèn thức tỉnh và cùng Dế Trũi dấn thân vào hành trình phiêu lưu khắp bốn phương, kết nghĩa anh em và kêu gọi muôn loài sống hòa bình.",
+        message: "Tình bạn chân thành, lòng dũng cảm, tinh thần chuộng hòa bình và sự khiêm tốn.",
+        keyTakeaways: [
+          "Bài học thấm thía về thói kiêu ngạo dẫn đến hậu quả tai hại.",
+          "Tình anh em kết nghĩa keo sơn gắn bó giữa Dế Mèn và Dế Trũi.",
+          "Ý chí phiêu lưu khám phá thế giới rộng lớn, vượt khỏi lũy tre làng.",
+          "Khát vọng muôn loài muôn vật kết làm anh em, hòa bình bác ái."
+        ],
+        plot: [
+          { event: "Thời trẻ bồng bột", desc: "Dế Mèn kiêu căng trêu chị Cốc khiến Dế Choắt bị chết oan." },
+          { event: "Lên đường phiêu lưu", desc: "Rời khỏi hang mẹ, dấn thân vào thế giới rộng lớn bên ngoài." },
+          { event: "Kết nghĩa bạn hiền", desc: "Cứu Dế Trũi thoát nạn và kết làm anh em đồng chí hướng." },
+          { event: "Đại hội muôn loài", desc: "Vận động muôn loài kết làm anh em, không tranh đoạt cấu xé." }
+        ],
+        authorBio: "Nhà văn Tô Hoài (1920 - 2014), cây đại thụ của văn học hiện đại Việt Nam, bậc thầy truyện đồng thoại thiếu nhi.",
+        characters: [
+          { name: "Dế Mèn", role: "Nhân vật chính", trait: "Dũng mãnh, ban đầu ngạo mạn sau biết sửa sai và chuộng nghĩa hiệp" },
+          { name: "Dế Trũi", role: "Người bạn tri kỷ", trait: "Kiên cường, trung thực, bạn đồng hành tin cậy" },
+          { name: "Dế Choắt", role: "Người hàng xóm", trait: "Gầy gò ốm yếu, để lại bài học đắt giá cho Mèn" }
+        ]
+      },
+      {
+        id: "book-hoang-tu-be",
+        title: "HOÀNG TỬ BÉ",
+        author: "Antoine de Saint-Exupéry",
+        isbn: "9786042171922",
+        category: "Văn học",
+        publisher: "NXB Kim Đồng",
+        year: 2023,
+        pageCount: 110,
+        shelfLocation: "Kệ C1 - Văn học Thế giới",
+        views: 512,
+        coverImage: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_43176.jpg",
+        description: "Cuốn sách triết lý giản dị mà sâu sắc nhất thế giới về tình bạn, tình yêu và cách nhìn cuộc sống bằng trái tim.",
+        summary: "Viên phi công gặp nạn trên sa mạc Sahara bất ngờ gặp gỡ Hoàng Tử Bé đến từ tiểu tinh cầu B-612. Qua câu chuyện của cậu về đóa hoa hồng, chú cáo và các hành tinh, người lớn nhận ra những giá trị đích thực đã vô tình lãng quên.",
+        message: "Những điều cốt lõi nhất thì vô hình trong mắt trần; người ta chỉ có thể nhìn thấy rõ ràng bằng trái tim.",
+        keyTakeaways: [
+          "Người ta chỉ thấy rõ với trái tim. Điều cốt lõi thì vô hình trong mắt trần.",
+          "Bạn phải chịu trách nhiệm mãi mãi với những gì bạn đã thuần hóa.",
+          "Thời gian bạn dành cho bông hoa hồng làm cho nàng trở nên quan trọng.",
+          "Người lớn thường quên rằng mình đã từng là trẻ thơ."
+        ],
+        plot: [
+          { event: "Rơi xuống sa mạc", desc: "Máy bay gặp sự cố giữa sa mạc hoang vu." },
+          { event: "Cuộc gặp kỳ diệu", desc: "Hoàng Tử Bé xuất hiện và nhờ vẽ một con cừu." },
+          { event: "Kể chuyện các hành tinh", desc: "Chuyến du hành qua các tiểu tinh cầu của người lớn thực dụng." },
+          { event: "Bài học của con Cáo", desc: "Khái niệm 'thuần hóa' và nhìn thấu bản chất bằng trái tim." }
+        ],
+        authorBio: "Nhà văn kiêm phi công người Pháp (1900 - 1944), một trong những tác giả được dịch ra nhiều thứ tiếng nhất nhân loại.",
+        characters: [
+          { name: "Hoàng Tử Bé", role: "Nhân vật chính", trait: "Ngây thơ, trong sáng, tràn đầy tình thương" },
+          { name: "Bông hoa hồng", role: "Người cậu yêu", trait: "Kiêu kỳ nhưng mong manh và gắn bó sâu sắc" },
+          { name: "Con Cáo", role: "Người thầy triết lý", trait: "Uyên bác, trao cho cậu bài học về sự thuần hóa" }
+        ]
+      },
+      {
+        id: "book-cosmos",
+        title: "COSMOS: VŨ TRỤ",
+        author: "Carl Sagan",
+        isbn: "9786047771233",
+        category: "Khoa học",
+        publisher: "NXB Thế Giới",
+        year: 2022,
+        pageCount: 420,
+        shelfLocation: "Kệ K3 - Thiên văn học",
+        views: 298,
+        coverImage: "https://cdn0.fahasa.com/media/catalog/product/8/9/8935235227361.jpg",
+        description: "Hành trình vĩ đại khám phá không gian, thời gian và sự sống qua ngòi bút của nhà thiên văn Carl Sagan.",
+        summary: "Bức tranh tráng lệ về 15 tỷ năm tiến hóa của vũ trụ, hành trình con người khai phá khoa học và nhận thức vị thế khiêm nhường của loài người.",
+        message: "Trái Đất là ngôi nhà chung mong manh giữa vũ trụ bao la; chúng ta có trách nhiệm trân trọng và bảo tồn nó.",
+        keyTakeaways: [
+          "Chúng ta đều là tro bụi của các vì sao (star-stuff) kết tinh thành.",
+          "Tư duy hoài nghi khoa học kết hợp lòng bao dung rộng mở.",
+          "Trách nhiệm bảo vệ 'Hạt bụi xanh lơ' (Pale Blue Dot) duy nhất của sự sống."
+        ],
+        plot: [
+          { event: "Khởi nguồn Vũ trụ", desc: "Vụ nổ Big Bang và sự hình thành các thiên hà." },
+          { event: "Bình minh nhân loại", desc: "Từ quan sát bầu trời của người cổ đại đến kính thiên văn hiện đại." },
+          { event: "Hạt bụi xanh lơ", desc: "Bức ảnh Trái Đất chụp từ rìa hệ Mặt Trời và bài học vị thế." }
+        ],
+        authorBio: "Carl Sagan (1934 - 1996), nhà thiên văn học, nhà vũ trụ học lừng danh người Mỹ có công phổ biến khoa học đến công chúng.",
+        characters: [
+          { name: "Loài người", role: "Kẻ khám phá", trait: "Nhỏ bé giữa vũ trụ nhưng mang khát vọng nhận thức vô tận" }
+        ]
+      },
+      {
+        id: "book-ai-superpowers",
+        title: "AI SUPERPOWERS — CƯỜNG QUỐC TRÍ TUỆ NHÂN TẠO",
+        author: "Kai-Fu Lee",
+        isbn: "9786045892341",
+        category: "Công nghệ",
+        publisher: "NXB Trẻ",
+        year: 2023,
+        pageCount: 368,
+        shelfLocation: "Kệ CN1 - Công nghệ Thông tin",
+        views: 380,
+        coverImage: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_35933.jpg",
+        description: "Phân tích sắc bén về làn sóng AI, tương lai việc làm và sức mạnh của lòng thấu cảm con người.",
+        summary: "Tiến sĩ Kai-Fu Lee làm sáng tỏ cách AI định hình nền kinh tế và nhấn mạnh những phẩm chất máy móc không thể thay thế: tình yêu thương và sự đồng cảm.",
+        message: "AI tối ưu hóa năng suất, nhưng trái tim và sự sẻ chia giữa con người mới đem lại ý nghĩa đích thực.",
+        keyTakeaways: [
+          "Bốn làn sóng bùng nổ của trí tuệ nhân tạo.",
+          "Tác động sâu sắc của tự động hóa tới việc làm tương lai.",
+          "Sức mạnh không thể thay thế của lòng trắc ẩn và sự quan tâm giữa con người."
+        ],
+        plot: [
+          { event: "Làn sóng AI bùng nổ", desc: "Từ học sâu đến ứng dụng thực tiễn trong đời sống." },
+          { event: "Cơn bão việc làm", desc: "Những ngành nghề chịu tác động lớn của tự động hóa." },
+          { event: "Bản thiết kế tương lai", desc: "Sự kết hợp giữa trí tuệ máy móc và trái tim nhân hậu." }
+        ],
+        authorBio: "Tiến sĩ Kai-Fu Lee, chuyên gia AI hàng đầu thế giới, cựu chủ tịch Google Trung Quốc.",
+        characters: []
+      }
+    ];
+
+    // Biến trạng thái ứng dụng
+    let selectedCategory = 'all';
+    let searchQuery = '';
+    let sortBy = 'popular';
+    let currentBook = null;
+    let currentActiveTab = 'overview';
+    let html5QrCode = null;
+
+    // 2. KHỞI CHẠY ỨNG DỤNG KHI TẢI TRANG
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderCategoryPills();
+      renderBooks();
+    });
+
+    // 3. TẠO THANH DANH MỤC THỂ LOẠI (PILLS)
+    function renderCategoryPills() {
+      const counts = {};
+      booksData.forEach(b => {
+        counts[b.category] = (counts[b.category] || 0) + 1;
+      });
+
+      const container = document.getElementById('categoryPills');
+      let html = `
+        <button
+          type="button"
+          onclick="setCategory('all')"
+          class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors border cursor-pointer shrink-0 ${
+            selectedCategory === 'all'
+              ? 'bg-gray-900 text-white border-gray-900 shadow-2xs'
+              : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+          }"
+        >
+          Tất cả (${booksData.length})
+        </button>
+      `;
+
+      Object.keys(counts).forEach(cat => {
+        const isAct = selectedCategory.toLowerCase() === cat.toLowerCase();
+        html += `
+          <button
+            type="button"
+            onclick="setCategory('${cat}')"
+            class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors border cursor-pointer shrink-0 ${
+              isAct
+                ? 'bg-gray-900 text-white border-gray-900 shadow-2xs'
+                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+            }"
+          >
+            ${cat} (${counts[cat]})
+          </button>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function setCategory(cat) {
+      selectedCategory = cat;
+      renderCategoryPills();
+      renderBooks();
+    }
+
+    // 4. HIỂN THỊ KỆ SÁCH (BOOKCARD DESIGN Y HỆT 100%)
+    function renderBooks() {
+      let filtered = booksData.filter(b => {
+        const matchCat = selectedCategory === 'all' || b.category.toLowerCase() === selectedCategory.toLowerCase();
+        if (!matchCat) return false;
+        if (!searchQuery.trim()) return true;
+        const q = searchQuery.toLowerCase().trim();
+        return (
+          b.title.toLowerCase().includes(q) ||
+          b.author.toLowerCase().includes(q) ||
+          b.isbn.toLowerCase().includes(q) ||
+          b.category.toLowerCase().includes(q)
+        );
+      });
+
+      // Sắp xếp
+      if (sortBy === 'popular') filtered.sort((a, b) => b.views - a.views);
+      else if (sortBy === 'newest') filtered.sort((a, b) => b.year - a.year);
+      else if (sortBy === 'title') filtered.sort((a, b) => a.title.localeCompare(b.title));
+
+      // Hiển thị thông báo tìm kiếm
+      const noticeBox = document.getElementById('searchNotice');
+      const noticeText = document.getElementById('searchNoticeText');
+      if (searchQuery.trim()) {
+        noticeBox.classList.remove('hidden');
+        noticeText.innerText = `Kết quả tìm kiếm cho: "${searchQuery}" (${filtered.length} cuốn)`;
+      } else {
+        noticeBox.classList.add('hidden');
+      }
+
+      const grid = document.getElementById('booksGrid');
+      const empty = document.getElementById('emptyState');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+      grid.innerHTML = filtered.map(book => `
+        <div
+          onclick="openBookDetails('${book.id}')"
+          class="bg-white border border-gray-200 rounded-xl p-3 sm:p-3.5 hover:border-amber-400 hover:shadow-md active:scale-[0.98] transition-all flex flex-col justify-between cursor-pointer group select-none"
+        >
+          <div>
+            <!-- Ảnh bìa sách -->
+            <div class="aspect-[3/4] w-full rounded-lg overflow-hidden bg-gray-100 mb-2.5 sm:mb-3 border border-gray-100 relative shadow-2xs">
+              <img
+                src="${book.coverImage}"
+                alt="${book.title}"
+                class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+              />
+              <span class="absolute bottom-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-xs text-white">
+                ${book.shelfLocation || 'Thư viện'}
+              </span>
+            </div>
+
+            <!-- Thể loại -->
+            <div class="mb-1">
+              <span class="text-[10px] sm:text-[11px] font-medium text-gray-600 bg-gray-100 px-1.5 sm:px-2 py-0.5 rounded inline-block truncate max-w-full">
+                ${book.category}
+              </span>
+            </div>
+
+            <!-- Tiêu đề & tác giả -->
+            <h3 class="font-bold text-xs sm:text-sm text-gray-900 leading-snug line-clamp-2 group-hover:text-amber-950 mb-0.5 sm:mb-1">
+              ${book.title}
+            </h3>
+            <p class="text-[11px] sm:text-xs text-gray-500 line-clamp-1 mb-1.5 sm:mb-2">
+              ${book.author} • ${book.year}
+            </p>
+
+            <!-- Tóm tắt ngắn -->
+            <p class="text-[11px] sm:text-xs text-gray-600 line-clamp-2 leading-relaxed font-normal">
+              ${book.description}
+            </p>
+          </div>
+
+          <!-- Chân thẻ sách -->
+          <div class="pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+            <span class="flex items-center gap-1 text-gray-400 text-[10px] sm:text-[11px]">
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+              <span>${book.views}</span>
+            </span>
+            <span class="text-[10px] text-amber-700 font-semibold group-hover:underline">
+              Chi tiết →
+            </span>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // 5. TÌM KIẾM & SẮP XẾP
+    function handleSearchChange() {
+      const val = document.getElementById('searchInput').value;
+      searchQuery = val;
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (val) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+      renderBooks();
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      searchQuery = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+      renderBooks();
+    }
+
+    function handleSortChange() {
+      sortBy = document.getElementById('sortSelect').value;
+      renderBooks();
+    }
+
+    function resetAllFilters() {
+      clearSearch();
+      setCategory('all');
+    }
+
+    // 6. XEM CHI TIẾT SÁCH (MODAL 5 TAB)
+    function openBookDetails(bookId) {
+      currentBook = booksData.find(b => b.id === bookId || b.isbn === bookId);
+      if (!currentBook) return;
+
+      currentBook.views += 1;
+      document.getElementById('modalCategoryBadge').innerText = currentBook.category;
+      document.getElementById('modalBookTitle').innerText = currentBook.title;
+
+      switchTab('overview');
+      initChatBox();
+
+      document.getElementById('detailsModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeDetailsModal() {
+      document.getElementById('detailsModal').classList.add('hidden');
+      renderBooks();
+    }
+
+    // Chuyển đổi giữa 5 Tab
+    function switchTab(tab) {
+      currentActiveTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-gray-900', 'text-gray-900', 'font-bold');
+        btn.classList.add('border-transparent', 'text-gray-500');
+      });
+      const activeBtn = document.getElementById('tabBtn-' + tab);
+      if (activeBtn) {
+        activeBtn.classList.add('border-gray-900', 'text-gray-900', 'font-bold');
+        activeBtn.classList.remove('border-transparent', 'text-gray-500');
+      }
+
+      const container = document.getElementById('tabContentContainer');
+      const b = currentBook;
+
+      if (tab === 'overview') {
+        container.innerHTML = `
+          <div class="space-y-4">
+            <div class="flex flex-row gap-3.5 items-start bg-white p-3 rounded-xl border border-gray-200/80 shadow-xs">
+              <div class="relative w-24 sm:w-28 shrink-0 aspect-[3/4] rounded-lg overflow-hidden border border-gray-200 shadow-xs bg-gray-100">
+                <img src="${b.coverImage}" class="w-full h-full object-cover" />
+              </div>
+              <div class="space-y-1 flex-1 min-w-0 text-xs text-gray-700">
+                <div class="flex items-center justify-between py-1 border-b border-gray-100">
+                  <span class="text-gray-500">Tác giả:</span>
+                  <span class="font-semibold text-gray-900">${b.author}</span>
+                </div>
+                <div class="flex items-center justify-between py-1 border-b border-gray-100">
+                  <span class="text-gray-500">Thể loại:</span>
+                  <span class="font-medium text-gray-800">${b.category}</span>
+                </div>
+                <div class="flex items-center justify-between py-1 border-b border-gray-100">
+                  <span class="text-gray-500">Năm xuất bản:</span>
+                  <span class="font-medium text-gray-800">${b.year}</span>
+                </div>
+                <div class="flex items-center justify-between py-1 border-b border-gray-100">
+                  <span class="text-gray-500">Mã ISBN:</span>
+                  <span class="font-mono text-gray-800">${b.isbn}</span>
+                </div>
+                <div class="flex items-center justify-between py-1">
+                  <span class="text-gray-500">Vị trí kệ:</span>
+                  <span class="font-medium text-amber-700">${b.shelfLocation}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tóm tắt cốt truyện -->
+            <div class="bg-white p-3.5 rounded-xl border border-gray-200 space-y-1.5 text-xs text-gray-700">
+              <h4 class="font-bold text-gray-900 flex items-center gap-1.5 text-sm">
+                <i data-lucide="book-open" class="w-4 h-4 text-orange-600"></i>
+                <span>Tóm tắt nội dung tác phẩm</span>
+              </h4>
+              <p class="leading-relaxed text-gray-600">${b.summary}</p>
+            </div>
+
+            <!-- Thông điệp chính -->
+            <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200/80 space-y-1 text-xs text-amber-950">
+              <h4 class="font-bold text-amber-900 flex items-center gap-1.5 text-sm">
+                <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i>
+                <span>Thông điệp cốt lõi</span>
+              </h4>
+              <p class="italic leading-relaxed">"${b.message}"</p>
+            </div>
+          </div>
+        `;
+      } else if (tab === 'plot') {
+        container.innerHTML = `
+          <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4">
+            <h4 class="font-bold text-sm text-gray-900 flex items-center gap-1.5">
+              <i data-lucide="git-commit" class="w-4 h-4 text-indigo-600"></i>
+              <span>Diễn biến cốt truyện chính</span>
+            </h4>
+            <div class="relative pl-4 border-l-2 border-indigo-200 space-y-3.5">
+              ${b.plot.map(p => `
+                <div class="relative">
+                  <span class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-indigo-600 ring-4 ring-white"></span>
+                  <h5 class="font-bold text-xs text-gray-900">${p.event}</h5>
+                  <p class="text-[11px] text-gray-600 mt-0.5">${p.desc}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (tab === 'author') {
+        container.innerHTML = `
+          <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3">
+            <h4 class="font-bold text-sm text-gray-900 flex items-center gap-1.5">
+              <i data-lucide="pen-tool" class="w-4 h-4 text-emerald-600"></i>
+              <span>Tiểu sử & Phong cách tác giả</span>
+            </h4>
+            <p class="text-xs text-gray-700 leading-relaxed">${b.authorBio}</p>
+          </div>
+        `;
+      } else if (tab === 'characters') {
+        container.innerHTML = `
+          <div class="space-y-3">
+            <h4 class="font-bold text-sm text-gray-900 flex items-center gap-1.5">
+              <i data-lucide="users" class="w-4 h-4 text-sky-600"></i>
+              <span>Tuyến nhân vật tiêu biểu (${b.characters.length})</span>
+            </h4>
+            <div class="grid gap-2.5">
+              ${b.characters.map(c => `
+                <div class="p-3 bg-white rounded-xl border border-gray-200 flex flex-col gap-1">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-xs text-gray-900">${c.name}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-sky-50 text-sky-700 font-medium">${c.role}</span>
+                  </div>
+                  <p class="text-[11px] text-gray-600">${c.trait}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (tab === 'message') {
+        container.innerHTML = `
+          <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3.5">
+            <h4 class="font-bold text-sm text-gray-900 flex items-center gap-1.5">
+              <i data-lucide="quote" class="w-4 h-4 text-amber-600"></i>
+              <span>Bài học đúc kết sâu sắc</span>
+            </h4>
+            <div class="space-y-2">
+              ${b.keyTakeaways.map((t, idx) => `
+                <div class="p-2.5 rounded-lg bg-gray-50 border border-gray-100 flex items-start gap-2 text-xs">
+                  <span class="w-5 h-5 rounded-full bg-amber-500 text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">${idx+1}</span>
+                  <span class="text-gray-700 leading-relaxed">${t}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+      lucide.createIcons();
+    }
+
+    // 7. HỎI ĐÁP & TRA CỨU SÁCH (100% NỘI BỘ, KHÔNG DÙNG AI NGOÀI)
+    function initChatBox() {
+      const box = document.getElementById('chatMessagesBox');
+      box.innerHTML = `
+        <div class="p-3 bg-white rounded-xl border border-gray-200 text-gray-700 leading-relaxed space-y-1">
+          <p>Xin chào! Mình đã nạp sẵn toàn bộ thông tin về tác phẩm <strong>"${currentBook.title}"</strong> của tác giả <strong>${currentBook.author}</strong>.</p>
+          <p class="text-[11px] text-gray-500">Bạn có thể hỏi về cốt truyện, thông điệp, các bài học hoặc ý nghĩa của cuốn sách này.</p>
+        </div>
+      `;
+    }
+
+    function askPreset(prompt) {
+      document.getElementById('chatInput').value = prompt;
+      handleSendChat();
+    }
+
+    function handleSendChat(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const q = input.value.trim();
+      if (!q || !currentBook) return;
+
+      const box = document.getElementById('chatMessagesBox');
+      box.innerHTML += `
+        <div class="p-2.5 bg-gray-900 text-white rounded-xl text-right ml-auto max-w-[85%] font-medium">
+          ${q}
+        </div>
+      `;
+      input.value = '';
+
+      // Tự động phân tích và trả lời ngay lập tức từ kho dữ liệu chuẩn của sách
+      const b = currentBook;
+      const lower = q.toLowerCase();
+      let answer = '';
+
+      if (lower.includes('thông điệp') || lower.includes('ý nghĩa')) {
+        answer = `Thông điệp cốt lõi của tác phẩm "${b.title}" là:\n"${b.message}"\n\nTác phẩm khuyên độc giả hướng tới những giá trị chân - thiện - mỹ trong đời sống.`;
+      } else if (lower.includes('bài học') || lower.includes('đúc kết')) {
+        answer = `Các bài học quan trọng nhất đúc kết từ "${b.title}":\n` + b.keyTakeaways.map((t, i) => `${i+1}. ${t}`).join('\n');
+      } else if (lower.includes('tác giả') || lower.includes('ai viết')) {
+        answer = `Tác phẩm được sáng tác bởi tác giả ${b.author} (${b.year}). ${b.authorBio}`;
+      } else if (lower.includes('nhân vật')) {
+        answer = `Tuyến nhân vật chính trong sách gồm:\n` + b.characters.map(c => `• ${c.name} (${c.role}): ${c.trait}`).join('\n');
+      } else {
+        answer = `Về cuốn sách "${b.title}" (${b.author}): ${b.summary}\n\nThông điệp: "${b.message}"`;
+      }
+
+      box.innerHTML += `
+        <div class="p-3 bg-white rounded-xl border border-gray-200 text-gray-800 space-y-1.5 leading-relaxed whitespace-pre-line">
+          ${answer}
+          <div class="text-[10px] text-gray-400 border-t pt-1 font-mono">
+            Nguồn: Thư viện số • Tác phẩm ${b.title} • ISBN: ${b.isbn}
+          </div>
+        </div>
+      `;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // 8. MÁY QUÉT MÃ VẠCH (BARCODE SCANNER)
+    function openScannerModal() {
+      document.getElementById('scannerModal').classList.remove('hidden');
+      setTimeout(() => {
+        try {
+          if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode("barcodeReaderBox");
+          }
+          html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 180 } },
+            (decodedText) => {
+              html5QrCode.stop();
+              closeScannerModal();
+              lookupIsbn(decodedText);
+            },
+            () => {}
+          );
+        } catch (err) {
+          console.warn("Lỗi camera:", err);
+        }
+      }, 300);
+    }
+
+    function closeScannerModal() {
+      document.getElementById('scannerModal').classList.add('hidden');
+      if (html5QrCode) {
+        try { html5QrCode.stop(); } catch(e){}
+      }
+    }
+
+    function submitManualIsbn() {
+      const code = document.getElementById('manualIsbnInput').value.trim();
+      if (!code) return;
+      closeScannerModal();
+      lookupIsbn(code);
+    }
+
+    function lookupIsbn(isbn) {
+      const book = booksData.find(b => b.isbn === isbn || isbn.includes(b.isbn));
+      if (book) {
+        openBookDetails(book.id);
+      } else {
+        alert("Không tìm thấy sách với mã ISBN: " + isbn);
+      }
+    }
+
+    // 9. GỢI Ý TÁC PHẨM THEO TÂM TRẠNG
+    function openPersonalityModal() {
+      document.getElementById('personalityModal').classList.remove('hidden');
+    }
+    function closePersonalityModal() {
+      document.getElementById('personalityModal').classList.add('hidden');
+    }
+    function pickMood(mood) {
+      closePersonalityModal();
+      let targetId = 'book-hoang-tu-be';
+      if (mood === 'kham-pha') targetId = 'book-de-men';
+      else if (mood === 'khoa-hoc') targetId = 'book-cosmos';
+      else if (mood === 'truyen-cam-hung') targetId = 'book-ai-superpowers';
+      else if (mood === 'suy-ngam') targetId = 'book-kieu';
+
+      openBookDetails(targetId);
+    }
+  </script>
+</body>
+</html>

@@ -3,7 +3,6 @@ html,body{height:100%}
 .card-elevated{transition:transform .18s ease,box-shadow .18s ease}
 .card-elevated:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(15,23,42,0.08)}
 html{scroll-behavior:smooth}
-/* Modal scroll handling */
 #detailModal:not(.hidden){overflow:auto}
 @media (min-width: 768px){
   #booksGrid .card-title{font-size:13px}

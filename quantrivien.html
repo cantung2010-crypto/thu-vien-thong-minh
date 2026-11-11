@@ -1,0 +1,43 @@
+<footer class="border-t border-gray-200 py-6 text-center text-xs text-gray-500">
+  <p class="font-medium">DỰ ÁN KHOA HỌC KĨ THUẬT CỦA CẤN VIỆT TÙNG VÀ TẠ NGỌC DIỆP 11A1</p>
+  
+  <!-- Nút Quản trị viên -->
+  <button 
+    onclick="openAdminLogin()" 
+    class="mt-2 inline-flex items-center gap-1.5 text-[11px] text-gray-400 hover:text-gray-700 py-1 px-2.5 rounded hover:bg-gray-100 transition-colors cursor-pointer"
+  >
+    🔒 <span>Quản trị viên</span>
+  </button>
+</footer>
+
+<!-- Modal Quản trị viên (Thêm & Xóa sách) -->
+<div id="adminModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+  <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 space-y-4">
+    <div class="flex items-center justify-between border-b pb-3">
+      <h3 class="font-bold text-sm text-gray-900">BẢNG QUẢN TRỊ VIÊN THƯ VIỆN</h3>
+      <button onclick="closeAdminModal()" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 font-bold text-xs">✕</button>
+    </div>
+
+    <!-- Form thêm sách mới -->
+    <div class="space-y-3 text-xs">
+      <h4 class="font-bold text-gray-800">Thêm sách mới vào thư viện:</h4>
+      <input id="newTitle" type="text" placeholder="Tên tác phẩm..." class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500" />
+      <input id="newAuthor" type="text" placeholder="Tác giả..." class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500" />
+      <div class="flex gap-2">
+        <input id="newIsbn" type="text" placeholder="Mã ISBN..." class="flex-1 p-2.5 border rounded-lg font-mono focus:outline-none focus:ring-1 focus:ring-orange-500" />
+        <select id="newCategory" class="p-2.5 border rounded-lg">
+          <option value="Văn học">Văn học</option>
+          <option value="Khoa học">Khoa học</option>
+          <option value="Công nghệ">Công nghệ</option>
+          <option value="Tâm lý">Tâm lý</option>
+        </select>
+      </div>
+      <input id="newCover" type="text" placeholder="Link ảnh bìa sách..." class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500" />
+      <textarea id="newSummary" rows="2" placeholder="Tóm tắt ngắn gọn cuốn sách..." class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500"></textarea>
+      
+      <button onclick="saveNewBook()" class="w-full py-2.5 bg-gray-900 hover:bg-black text-white font-bold rounded-lg transition-colors">
+        Lưu sách vào Thư viện
+      </button>
+    </div>
+  </div>
+</div>

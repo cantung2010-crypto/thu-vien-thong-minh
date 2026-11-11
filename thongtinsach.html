@@ -1,0 +1,83 @@
+<!-- Modal Xem Chi Tiết Tác Phẩm -->
+  <div id="detailsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-5xl w-full h-[92vh] flex flex-col shadow-2xl border border-gray-200 overflow-hidden">
+      
+      <!-- Đầu Modal -->
+      <div class="px-4 py-3 sm:px-6 sm:py-3.5 border-b border-gray-200 flex items-center justify-between gap-3 shrink-0 bg-white">
+        <div class="flex items-center gap-2 min-w-0">
+          <span id="modalCategoryBadge" class="text-xs font-semibold px-2 py-0.5 rounded bg-gray-100 text-gray-700 shrink-0"></span>
+          <h2 id="modalBookTitle" class="font-bold text-sm sm:text-base text-gray-950 truncate"></h2>
+        </div>
+        <button onclick="closeDetailsModal()" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Thân Modal 2 cột -->
+      <div class="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-12 overflow-hidden divide-y md:divide-y-0 md:divide-x divide-gray-200">
+        
+        <!-- Cột trái: 5 Tab nội dung -->
+        <div class="md:col-span-7 flex flex-col h-full overflow-hidden bg-gray-50/50">
+          <div class="flex items-center gap-1 px-3 pt-2.5 border-b border-gray-200 bg-white overflow-x-auto no-scrollbar shrink-0">
+            <button onclick="switchTab('overview')" id="tabBtn-overview" class="tab-btn pb-2.5 px-2.5 text-xs font-bold border-b-2 border-gray-900 text-gray-900 whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="book-open" class="w-3.5 h-3.5"></i><span>Tổng quan</span>
+            </button>
+            <button onclick="switchTab('plot')" id="tabBtn-plot" class="tab-btn pb-2.5 px-2.5 text-xs font-semibold border-b-2 border-transparent text-gray-500 whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="git-commit" class="w-3.5 h-3.5 text-indigo-600"></i><span>Cốt truyện</span>
+            </button>
+            <button onclick="switchTab('author')" id="tabBtn-author" class="tab-btn pb-2.5 px-2.5 text-xs font-semibold border-b-2 border-transparent text-gray-500 whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-emerald-600"></i><span>Tác giả</span>
+            </button>
+            <button onclick="switchTab('characters')" id="tabBtn-characters" class="tab-btn pb-2.5 px-2.5 text-xs font-semibold border-b-2 border-transparent text-gray-500 whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-sky-600"></i><span>Nhân vật</span>
+            </button>
+            <button onclick="switchTab('message')" id="tabBtn-message" class="tab-btn pb-2.5 px-2.5 text-xs font-semibold border-b-2 border-transparent text-gray-500 whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="quote" class="w-3.5 h-3.5 text-amber-600"></i><span>Thông điệp</span>
+            </button>
+          </div>
+
+          <div id="tabContentContainer" class="p-4 sm:p-5 space-y-4 overflow-y-auto flex-1 text-xs text-gray-800"></div>
+        </div>
+
+        <!-- Cột phải: Tra cứu & Trò chuyện nội bộ về tác phẩm -->
+        <div class="md:col-span-5 flex flex-col bg-white h-full overflow-hidden">
+          <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
+            <div class="flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+              <span class="text-xs font-bold text-gray-900">Tra cứu thông tin tác phẩm</span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
+              Dữ liệu chuẩn
+            </span>
+          </div>
+
+          <div id="chatMessagesBox" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs bg-gray-50/40"></div>
+
+          <!-- Gợi ý nhanh -->
+          <div class="px-3 py-2 border-t border-gray-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-white shrink-0">
+            <span class="text-[10px] font-bold text-amber-900 shrink-0">Gợi ý:</span>
+            <button onclick="askPreset('Thông điệp cốt lõi của tác phẩm này là gì?')" class="px-2.5 py-1 rounded-md text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-200 whitespace-nowrap">
+              Thông điệp sách
+            </button>
+            <button onclick="askPreset('Những bài học đúc kết quan trọng nhất?')" class="px-2.5 py-1 rounded-md text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-200 whitespace-nowrap">
+              Bài học đúc kết
+            </button>
+          </div>
+
+          <!-- Ô nhập câu hỏi tra cứu -->
+          <form onsubmit="handleSendChat(event)" class="p-2.5 border-t border-gray-200 flex items-center gap-2 bg-white shrink-0">
+            <input
+              id="chatInput"
+              type="text"
+              placeholder="Hỏi về tác giả, bài học, nhân vật..."
+              class="flex-1 px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:border-gray-900"
+            />
+            <button type="submit" class="px-3.5 py-2 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-black transition-colors flex items-center gap-1 cursor-pointer">
+              <span>Gửi</span>
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

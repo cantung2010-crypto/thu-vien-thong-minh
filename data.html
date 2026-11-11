@@ -1,0 +1,498 @@
+<!-- Khối mã JavaScript điều khiển toàn bộ chức năng -->
+  <script>
+    // 1. DỮ LIỆU SÁCH CHUẨN CỦA DỰ ÁN
+    let booksData = [
+      {
+        id: "book-kieu",
+        title: "TRUYỆN KIỀU",
+        author: "Nguyễn Du",
+        isbn: "STK-006073",
+        category: "Văn học",
+        publisher: "NXB Văn Học",
+        year: 2024,
+        shelfLocation: "Kệ A1 - Văn học Cổ điển",
+        views: 342,
+        coverImage: "https://cdn1.fahasa.com/media/catalog/product/b/_/b_a-1-truy_n-ki_u.jpg",
+        description: "Kiệt tác bất hủ của đại thi hào Nguyễn Du gồm 3.254 câu thơ lục bát, phản ánh bi kịch và vẻ đẹp người phụ nữ.",
+        summary: "Truyện Kiều kể về cuộc đời 15 năm lưu lạc chìm nổi của Thúy Kiều vì chữ hiếu mà hy sinh tình duyên và tuổi xuân.",
+        message: "Đề cao giá trị nhân phẩm, tình yêu tự do và tư tưởng 'Chữ Tâm kia mới bằng ba chữ Tài'.",
+        keyTakeaways: [
+          "Khát vọng tự do yêu đương và tự quyết định hạnh phúc.",
+          "Chữ Hiếu cao đẹp khi Kiều chấp nhận hy sinh duyên riêng vì gia đình.",
+          "Nghệ thuật miêu tả tâm lý và ngôn ngữ thơ lục bát trác tuyệt của Nguyễn Du."
+        ],
+        plot: [
+          { event: "Du xuân Thanh minh", desc: "Thúy Kiều gặp Kim Trọng và thề nguyền gắn bó." },
+          { event: "Gia biến tai ương", desc: "Gia đình gặp nạn, Kiều bán mình chuộc cha và trao duyên cho Thúy Vân." },
+          { event: "15 năm lưu lạc", desc: "Trải qua muôn vàn đau khổ trước khi gặp Từ Hải và đoàn tụ gia đình." }
+        ],
+        authorBio: "Đại thi hào dân tộc Nguyễn Du (1765 - 1820), Danh nhân văn hóa thế giới, quê tại Nghi Xuân, Hà Tĩnh.",
+        characters: [
+          { name: "Thúy Kiều", role: "Nhân vật chính", trait: "Tài sắc vẹn toàn, giàu đức hy sinh" },
+          { name: "Kim Trọng", role: "Người tình tri kỷ", trait: "Hào hoa phong nhã, thủy chung son sắt" }
+        ]
+      },
+      {
+        id: "book-de-men",
+        title: "DẾ MÈN PHIÊU LƯU KÝ",
+        author: "Tô Hoài",
+        isbn: "9786042183246",
+        category: "Văn học",
+        publisher: "NXB Kim Đồng",
+        year: 2023,
+        shelfLocation: "Kệ B2 - Văn học Thiếu nhi",
+        views: 428,
+        coverImage: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_21128.jpg",
+        description: "Tác phẩm văn học thiếu nhi kinh điển của Tô Hoài về bài học trưởng thành và lý tưởng hòa bình của Dế Mèn.",
+        summary: "Từ một chú dế kiêu căng, sau cái chết của Dế Choắt, Dế Mèn thức tỉnh và cùng Dế Trũi phiêu lưu bốn phương kết bạn muôn loài.",
+        message: "Tình bạn chân thành, lòng dũng cảm, tinh thần chuộng hòa bình và sự khiêm tốn.",
+        keyTakeaways: [
+          "Bài học đắt giá về thói kiêu căng ngạo mạn.",
+          "Tình anh em kết nghĩa keo sơn giữa Dế Mèn và Dế Trũi.",
+          "Khát vọng muôn loài kết làm anh em hòa bình."
+        ],
+        plot: [
+          { event: "Tuổi trẻ bồng bột", desc: "Dế Mèn kiêu căng gây ra cái chết của Dế Choắt." },
+          { event: "Lên đường phiêu lưu", desc: "Rời hang mẹ, dấn thân vào thế giới rộng lớn." },
+          { event: "Kết nghĩa bạn hiền", desc: "Cứu Dế Trũi và cùng nhau kêu gọi muôn loài sống hòa bình." }
+        ],
+        authorBio: "Nhà văn Tô Hoài (1920 - 2014), cây đại thụ của văn học thiếu nhi Việt Nam.",
+        characters: [
+          { name: "Dế Mèn", role: "Nhân vật chính", trait: "Dũng mãnh, ban đầu ngạo mạn sau biết sửa sai" },
+          { name: "Dế Trũi", role: "Bạn đồng hành", trait: "Kiên cường, trung thực, hoạn nạn có nhau" }
+        ]
+      },
+      {
+        id: "book-hoang-tu-be",
+        title: "HOÀNG TỬ BÉ",
+        author: "Antoine de Saint-Exupéry",
+        isbn: "9786042171922",
+        category: "Văn học",
+        publisher: "NXB Kim Đồng",
+        year: 2023,
+        shelfLocation: "Kệ C1 - Văn học Thế giới",
+        views: 512,
+        coverImage: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_43176.jpg",
+        description: "Tác phẩm triết lý giản dị mà sâu sắc nhất thế giới về tình bạn, tình yêu và cách nhìn cuộc sống bằng trái tim.",
+        summary: "Viên phi công gặp nạn trên sa mạc Sahara gặp gỡ Hoàng Tử Bé đến từ tiểu tinh cầu B-612.",
+        message: "Những điều cốt lõi nhất thì vô hình trong mắt trần; người ta chỉ có thể nhìn thấy rõ ràng bằng trái tim.",
+        keyTakeaways: [
+          "Người ta chỉ thấy rõ bằng trái tim, mắt thường không thấy được điều cốt lõi.",
+          "Bạn phải chịu trách nhiệm mãi mãi với những gì bạn đã thuần hóa.",
+          "Thời gian bạn dành cho bông hoa hồng làm cho nàng trở nên quan trọng."
+        ],
+        plot: [
+          { event: "Rơi xuống sa mạc", desc: "Máy bay gặp sự cố giữa sa mạc Sahara." },
+          { event: "Gặp gỡ Hoàng Tử Bé", desc: "Cậu bé xuất hiện và kể chuyện các tiểu hành tinh." },
+          { event: "Bài học của con Cáo", desc: "Ý nghĩa của sự thuần hóa và tình yêu thương." }
+        ],
+        authorBio: "Nhà văn kiêm phi công người Pháp Antoine de Saint-Exupéry (1900 - 1944).",
+        characters: [
+          { name: "Hoàng Tử Bé", role: "Nhân vật chính", trait: "Ngây thơ, trong sáng, giàu tình cảm" },
+          { name: "Con Cáo", role: "Người thầy triết lý", trait: "Uyên bác, dạy bài học về sự thuần hóa" }
+        ]
+      },
+      {
+        id: "book-cosmos",
+        title: "COSMOS: VŨ TRỤ",
+        author: "Carl Sagan",
+        isbn: "9786047771233",
+        category: "Khoa học",
+        publisher: "NXB Thế Giới",
+        year: 2022,
+        shelfLocation: "Kệ K3 - Thiên văn học",
+        views: 298,
+        coverImage: "https://cdn0.fahasa.com/media/catalog/product/8/9/8935235227361.jpg",
+        description: "Hành trình vĩ đại khám phá không gian, thời gian và sự sống qua ngòi bút của Carl Sagan.",
+        summary: "Khám phá 15 tỷ năm lịch sử vũ trụ và nhận thức vị thế khiêm nhường của nhân loại.",
+        message: "Trái Đất là hạt bụi xanh lơ mong manh giữa vũ trụ bao la; chúng ta có trách nhiệm trân trọng và bảo tồn nó.",
+        keyTakeaways: [
+          "Chúng ta đều là bụi sao kết tinh thành.",
+          "Tư duy hoài nghi khoa học kết hợp lòng bao dung rộng mở.",
+          "Trách nhiệm bảo vệ Trái Đất - ngôi nhà chung duy nhất."
+        ],
+        plot: [
+          { event: "Khởi nguồn vũ trụ", desc: "Vụ nổ Big Bang và các vì sao." },
+          { event: "Hạt bụi xanh lơ", desc: "Bức ảnh Trái Đất và bài học vị thế nhân loại." }
+        ],
+        authorBio: "Carl Sagan (1934 - 1996), nhà thiên văn học người Mỹ lừng danh thế giới.",
+        characters: []
+      }
+    ];
+
+    let selectedCategory = 'all';
+    let searchQuery = '';
+    let sortBy = 'popular';
+    let currentBook = null;
+    let html5QrCode = null;
+
+    // 2. KHỞI CHẠY KHI TẢI TRANG
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderCategoryPills();
+      renderBooks();
+    });
+
+    // 3. TẠO THANH LỌC THỂ LOẠI
+    function renderCategoryPills() {
+      const counts = {};
+      booksData.forEach(b => { counts[b.category] = (counts[b.category] || 0) + 1; });
+      const container = document.getElementById('categoryPills');
+      let html = `
+        <button onclick="setCategory('all')" class="px-3 py-1.5 rounded-lg text-xs font-medium border cursor-pointer shrink-0 ${
+          selectedCategory === 'all' ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 border-gray-200'
+        }">Tất cả (${booksData.length})</button>
+      `;
+      Object.keys(counts).forEach(cat => {
+        const isAct = selectedCategory.toLowerCase() === cat.toLowerCase();
+        html += `
+          <button onclick="setCategory('${cat}')" class="px-3 py-1.5 rounded-lg text-xs font-medium border cursor-pointer shrink-0 ${
+            isAct ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 border-gray-200'
+          }">${cat} (${counts[cat]})</button>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function setCategory(cat) {
+      selectedCategory = cat;
+      renderCategoryPills();
+      renderBooks();
+    }
+
+    // 4. HIỂN THỊ KỆ SÁCH
+    function renderBooks() {
+      let filtered = booksData.filter(b => {
+        const matchCat = selectedCategory === 'all' || b.category.toLowerCase() === selectedCategory.toLowerCase();
+        if (!matchCat) return false;
+        if (!searchQuery.trim()) return true;
+        const q = searchQuery.toLowerCase().trim();
+        return b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.isbn.toLowerCase().includes(q);
+      });
+
+      if (sortBy === 'popular') filtered.sort((a, b) => b.views - a.views);
+      else if (sortBy === 'newest') filtered.sort((a, b) => b.year - a.year);
+      else if (sortBy === 'title') filtered.sort((a, b) => a.title.localeCompare(b.title));
+
+      const grid = document.getElementById('booksGrid');
+      const empty = document.getElementById('emptyState');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+      grid.innerHTML = filtered.map(b => `
+        <div onclick="openBookDetails('${b.id}')" class="bg-white border border-gray-200 rounded-xl p-3 hover:border-amber-400 hover:shadow-md transition-all flex flex-col justify-between cursor-pointer group">
+          <div>
+            <div class="aspect-[3/4] w-full rounded-lg overflow-hidden bg-gray-100 mb-2 border relative">
+              <img src="${b.coverImage}" alt="${b.title}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" />
+            </div>
+            <span class="text-[10px] font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded inline-block">${b.category}</span>
+            <h3 class="font-bold text-xs text-gray-900 line-clamp-2 mt-1">${b.title}</h3>
+            <p class="text-[11px] text-gray-500 line-clamp-1">${b.author} • ${b.year}</p>
+          </div>
+          <div class="pt-2 mt-2 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+            <span class="flex items-center gap-1 text-[11px] text-gray-400">
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i><span>${b.views}</span>
+            </span>
+            <span class="text-[10px] text-amber-700 font-semibold group-hover:underline">Chi tiết →</span>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // 5. TÌM KIẾM & SẮP XẾP
+    function handleSearchChange() {
+      searchQuery = document.getElementById('searchInput').value;
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (searchQuery) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+      renderBooks();
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      searchQuery = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+      renderBooks();
+    }
+
+    function handleSortChange() {
+      sortBy = document.getElementById('sortSelect').value;
+      renderBooks();
+    }
+
+    function resetAllFilters() {
+      clearSearch();
+      setCategory('all');
+    }
+
+    // 6. XEM CHI TIẾT SÁCH (5 TAB)
+    function openBookDetails(bookId) {
+      currentBook = booksData.find(b => b.id === bookId || b.isbn === bookId);
+      if (!currentBook) return;
+      currentBook.views += 1;
+      document.getElementById('modalCategoryBadge').innerText = currentBook.category;
+      document.getElementById('modalBookTitle').innerText = currentBook.title;
+      switchTab('overview');
+      initChatBox();
+      document.getElementById('detailsModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeDetailsModal() {
+      document.getElementById('detailsModal').classList.add('hidden');
+      renderBooks();
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-gray-900', 'text-gray-900', 'font-bold');
+        btn.classList.add('border-transparent', 'text-gray-500');
+      });
+      document.getElementById('tabBtn-' + tab)?.classList.add('border-gray-900', 'text-gray-900', 'font-bold');
+      const container = document.getElementById('tabContentContainer');
+      const b = currentBook;
+
+      if (tab === 'overview') {
+        container.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex gap-3 bg-white p-3 rounded-xl border">
+              <img src="${b.coverImage}" class="w-24 aspect-[3/4] object-cover rounded-lg" />
+              <div class="space-y-1 text-xs">
+                <p><strong>Tác giả:</strong> ${b.author}</p>
+                <p><strong>Thể loại:</strong> ${b.category}</p>
+                <p><strong>Mã ISBN:</strong> ${b.isbn}</p>
+                <p><strong>Năm xuất bản:</strong> ${b.year}</p>
+              </div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border space-y-1">
+              <h4 class="font-bold text-gray-900">Tóm tắt tác phẩm</h4>
+              <p class="text-gray-600 leading-relaxed">${b.summary}</p>
+            </div>
+            <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-950">
+              <h4 class="font-bold">Thông điệp cốt lõi</h4>
+              <p class="italic">"${b.message}"</p>
+            </div>
+          </div>
+        `;
+      } else if (tab === 'plot') {
+        container.innerHTML = `
+          <div class="bg-white p-4 rounded-xl border space-y-3">
+            <h4 class="font-bold">Diễn biến cốt truyện chính</h4>
+            ${b.plot.map(p => `
+              <div class="border-l-2 border-indigo-400 pl-3 py-1">
+                <h5 class="font-bold text-gray-900">${p.event}</h5>
+                <p class="text-gray-600">${p.desc}</p>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (tab === 'author') {
+        container.innerHTML = `
+          <div class="bg-white p-4 rounded-xl border space-y-2">
+            <h4 class="font-bold">Tiểu sử tác giả</h4>
+            <p class="text-gray-700">${b.authorBio}</p>
+          </div>
+        `;
+      } else if (tab === 'characters') {
+        container.innerHTML = `
+          <div class="space-y-2">
+            <h4 class="font-bold">Tuyến nhân vật chính</h4>
+            ${b.characters.map(c => `
+              <div class="p-3 bg-white rounded-xl border">
+                <span class="font-bold text-gray-900">${c.name}</span>
+                <span class="text-[10px] text-sky-700 ml-2">(${c.role})</span>
+                <p class="text-gray-600 mt-1">${c.trait}</p>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (tab === 'message') {
+        container.innerHTML = `
+          <div class="bg-white p-4 rounded-xl border space-y-2">
+            <h4 class="font-bold">Bài học đúc kết</h4>
+            ${b.keyTakeaways.map((t, idx) => `
+              <div class="p-2 rounded bg-gray-50 border flex gap-2">
+                <span class="font-bold text-amber-600">${idx+1}.</span>
+                <span>${t}</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+      lucide.createIcons();
+    }
+
+    // 7. TRA CỨU THÔNG TIN SÁCH NỘI BỘ
+    function initChatBox() {
+      document.getElementById('chatMessagesBox').innerHTML = `
+        <div class="p-3 bg-white rounded-xl border text-gray-700">
+          Đã mở tác phẩm <strong>"${currentBook.title}"</strong>. Hãy đặt câu hỏi về tác giả, bài học hoặc nội dung sách.
+        </div>
+      `;
+    }
+
+    function askPreset(prompt) {
+      document.getElementById('chatInput').value = prompt;
+      handleSendChat();
+    }
+
+    function handleSendChat(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const q = input.value.trim();
+      if (!q || !currentBook) return;
+
+      const box = document.getElementById('chatMessagesBox');
+      box.innerHTML += `<div class="p-2.5 bg-gray-900 text-white rounded-xl text-right ml-auto max-w-[85%] font-medium">${q}</div>`;
+      input.value = '';
+
+      const b = currentBook;
+      const lower = q.toLowerCase();
+      let answer = '';
+
+      if (lower.includes('thông điệp') || lower.includes('ý nghĩa')) {
+        answer = `Thông điệp của cuốn sách:\n"${b.message}"`;
+      } else if (lower.includes('bài học') || lower.includes('đúc kết')) {
+        answer = `Bài học then chốt:\n` + b.keyTakeaways.map((t, i) => `${i+1}. ${t}`).join('\n');
+      } else if (lower.includes('tác giả')) {
+        answer = `Tác phẩm của tác giả ${b.author} (${b.year}). ${b.authorBio}`;
+      } else {
+        answer = `Tác phẩm "${b.title}": ${b.summary}`;
+      }
+
+      box.innerHTML += `<div class="p-3 bg-white rounded-xl border text-gray-800 whitespace-pre-line leading-relaxed">${answer}</div>`;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // 8. MÁY QUÉT CAMERA & GỢI Ý
+    function openScannerModal() {
+      document.getElementById('scannerModal').classList.remove('hidden');
+      setTimeout(() => {
+        try {
+          if (!html5QrCode) html5QrCode = new Html5Qrcode("barcodeReaderBox");
+          html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 180 } },
+            (decodedText) => { html5QrCode.stop(); closeScannerModal(); lookupIsbn(decodedText); }, () => {}
+          );
+        } catch (e) {}
+      }, 300);
+    }
+    function closeScannerModal() {
+      document.getElementById('scannerModal').classList.add('hidden');
+      if (html5QrCode) { try { html5QrCode.stop(); } catch(e){} }
+    }
+    function submitManualIsbn() {
+      const code = document.getElementById('manualIsbnInput').value.trim();
+      if (!code) return;
+      closeScannerModal();
+      lookupIsbn(code);
+    }
+    function lookupIsbn(isbn) {
+      const b = booksData.find(x => x.isbn === isbn || isbn.includes(x.isbn));
+      if (b) openBookDetails(b.id);
+      else alert("Không tìm thấy sách với mã ISBN: " + isbn);
+    }
+
+    function openPersonalityModal() { document.getElementById('personalityModal').classList.remove('hidden'); }
+    function closePersonalityModal() { document.getElementById('personalityModal').classList.add('hidden'); }
+    function pickMood(mood) {
+      closePersonalityModal();
+      let targetId = 'book-hoang-tu-be';
+      if (mood === 'kham-pha') targetId = 'book-de-men';
+      else if (mood === 'khoa-hoc') targetId = 'book-cosmos';
+      else if (mood === 'suy-ngam') targetId = 'book-kieu';
+      openBookDetails(targetId);
+    }
+
+    // 9. QUẢN TRỊ VIÊN (MẬT KHẨU 101001 & THÊM/XÓA SÁCH)
+    function openAdminAuthModal() {
+      document.getElementById('adminPinInput').value = '';
+      document.getElementById('adminPinError').classList.add('hidden');
+      document.getElementById('adminAuthModal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('adminPinInput').focus(), 100);
+    }
+    function closeAdminAuthModal() { document.getElementById('adminAuthModal').classList.add('hidden'); }
+
+    function verifyAdminPin() {
+      const pin = document.getElementById('adminPinInput').value.trim();
+      if (pin === '101001') {
+        closeAdminAuthModal();
+        openAdminDashboardModal();
+      } else {
+        const err = document.getElementById('adminPinError');
+        err.innerText = '❌ Mật khẩu không đúng!';
+        err.classList.remove('hidden');
+      }
+    }
+
+    function openAdminDashboardModal() {
+      renderAdminBooksList();
+      document.getElementById('adminDashboardModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeAdminDashboardModal() { document.getElementById('adminDashboardModal').classList.add('hidden'); }
+
+    function renderAdminBooksList() {
+      document.getElementById('adminTotalBooksCount').innerText = booksData.length;
+      document.getElementById('adminBooksListTable').innerHTML = booksData.map(b => `
+        <div class="p-3 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <img src="${b.coverImage}" class="w-8 h-10 object-cover rounded border" />
+            <div>
+              <h5 class="font-bold text-xs text-gray-900">${b.title}</h5>
+              <p class="text-[11px] text-gray-500">${b.author} • ${b.isbn}</p>
+            </div>
+          </div>
+          <button onclick="handleAdminDeleteBook('${b.id}')" class="px-2 py-1 text-xs text-red-600 border border-red-200 rounded hover:bg-red-50">Xóa</button>
+        </div>
+      `).join('');
+    }
+
+    function handleAdminAddNewBook() {
+      const title = document.getElementById('adminBookTitle').value.trim();
+      const author = document.getElementById('adminBookAuthor').value.trim();
+      const isbn = document.getElementById('adminBookIsbn').value.trim();
+      const category = document.getElementById('adminBookCategory').value;
+      const year = parseInt(document.getElementById('adminBookYear').value) || 2024;
+      const coverImage = document.getElementById('adminBookCover').value.trim() || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600';
+      const summary = document.getElementById('adminBookSummary').value.trim() || 'Tác phẩm mới được bổ sung.';
+      const message = document.getElementById('adminBookMessage').value.trim() || 'Giá trị nhân văn cao đẹp.';
+
+      if (!title || !author || !isbn) {
+        alert('Vui lòng nhập Tên tác phẩm, Tác giả và Mã ISBN!');
+        return;
+      }
+
+      booksData.unshift({
+        id: 'book-' + Date.now(),
+        title, author, isbn, category, year,
+        views: 0, coverImage, description: summary, summary, message,
+        keyTakeaways: [summary, message],
+        plot: [{ event: "Nội dung", desc: summary }],
+        authorBio: `Tác giả ${author}.`,
+        characters: []
+      });
+
+      alert(`✓ Đã thêm thành công cuốn sách: "${title}"!`);
+      closeAdminDashboardModal();
+      renderCategoryPills();
+      renderBooks();
+    }
+
+    function handleAdminDeleteBook(bookId) {
+      if (confirm('Bạn có chắc muốn xóa cuốn sách này?')) {
+        booksData = booksData.filter(b => b.id !== bookId);
+        renderAdminBooksList();
+        renderCategoryPills();
+        renderBooks();
+      }
+    }
+  </script>
+</body>
+</html>

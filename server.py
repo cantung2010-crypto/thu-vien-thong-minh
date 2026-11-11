@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
 """
-THƯ VIỆN THÔNG MINH — Máy Chủ Python Đơn Giản Nhất (100% Giống Web Gốc)
+THƯ VIỆN THÔNG MINH
 Dự án khoa học kĩ thuật của Cấn Việt Tùng và Tạ Ngọc Diệp 11A1
 """
 
@@ -8,10 +7,9 @@ import http.server
 import socketserver
 import os
 
-# Cổng khởi chạy máy chủ (8000 hoặc theo cổng dịch vụ đám mây)
+# Cổng khởi chạy máy chủ 
 PORT = int(os.environ.get("PORT", 8000))
 
-# Toàn bộ mã giao diện Web HTML5 + Tailwind CSS giống hệt 100% web gốc
 HTML_WEB = """<!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -25,12 +23,11 @@ HTML_WEB = """<!DOCTYPE html>
 </head>
 <body class="bg-white text-gray-900 min-h-screen flex flex-col antialiased">
 
-  <!-- 1. Thanh điều hướng Top Navbar -->
+  <!-- Thanh điều hướng -->
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
         <div class="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center text-white font-bold text-sm shadow-xs">
-          📚
         </div>
         <div>
           <span class="font-bold text-sm sm:text-base text-gray-950 tracking-tight block">
@@ -43,17 +40,17 @@ HTML_WEB = """<!DOCTYPE html>
       </div>
       <div class="flex items-center gap-2">
         <button onclick="openBookModal('book-hoang-tu-be')" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-gradient-to-r from-orange-50 to-purple-50 text-gray-800 border border-orange-200 hover:border-orange-300">
-          <span class="text-orange-500">✨</span>
+          <span class="text-orange-500"></span>
           <span>Gợi ý sách</span>
         </button>
         <button onclick="openScanner()" class="px-3 py-1.5 bg-gradient-to-r from-orange-600 to-amber-500 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-md">
-          <span>📷 Quét mã</span>
+          <span>Quét mã</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- 2. Hero Banner & Kệ Sách -->
+  <!-- Kệ Sách -->
   <main class="max-w-6xl mx-auto px-4 py-8 space-y-6 flex-1 w-full">
     <div class="rounded-3xl bg-gradient-to-br from-gray-950 via-gray-900 to-orange-950 text-white p-6 sm:p-10 shadow-xl border border-gray-800">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30 mb-2">
@@ -86,7 +83,7 @@ HTML_WEB = """<!DOCTYPE html>
     <div id="booksGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
   </main>
 
-  <!-- 3. Modal Chi Tiết Tác Phẩm (Đã loại bỏ Góc câu hỏi tư duy AI) -->
+  <!-- Modal Chi Tiết Tác Phẩm -->
   <div id="bookModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/70">
     <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-gray-200 overflow-hidden">
       <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50">
@@ -257,7 +254,6 @@ HTML_WEB = """<!DOCTYPE html>
 </html>
 """
 
-# Bộ xử lý yêu cầu HTTP cực đơn giản bằng thư viện chuẩn của Python
 class SimpleWebHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -266,6 +262,6 @@ class SimpleWebHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(HTML_WEB.encode("utf-8"))
 
 if __name__ == "__main__":
-    print(f"🚀 THƯ VIỆN THÔNG MINH Python Web đang chạy tại: http://localhost:{PORT}")
+    print(f" THƯ VIỆN THÔNG MINH tại: http://localhost:{PORT}")
     with socketserver.TCPServer(("", PORT), SimpleWebHandler) as server:
         server.serve_forever()

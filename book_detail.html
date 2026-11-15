@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ book.title }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>THÔNG TIN SÁCH</h1>
+    </header>
+
+    <main class="detail">
+
+        <img src="{{ book.image }}" alt="{{ book.title }}">
+
+        <div>
+            <h2>{{ book.title }}</h2>
+
+            <p><b>Tác giả:</b> {{ book.author }}</p>
+            <p><b>Thể loại:</b> {{ book.category }}</p>
+            <p><b>Năm xuất bản:</b> {{ book.year }}</p>
+
+            <h3>Giới thiệu</h3>
+            <p>{{ book.description }}</p>
+
+            <h3>Tóm tắt nội dung</h3>
+            <p>{{ book.summary }}</p>
+
+            <h3>Nhân vật</h3>
+            <p>{{ book.characters }}</p>
+
+            <p><b>Mã vạch:</b> {{ book.barcode }}</p>
+
+            <a href="/">Quay lại thư viện</a>
+        </div>
+
+    </main>
+
+</body>
+</html>
